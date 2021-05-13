@@ -126,6 +126,8 @@ for item in perturbation_substitute:
 
 #127-, simulating hun-hum
 
+print('***Human-Human Started***')
+
 #This requires label pairs and history
 #Ten labels:1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4, 3-3, 3-4, 4-4
 #letter: a, b, c, d, e, f, g, h, i, j
@@ -233,6 +235,8 @@ memory=[[0,0],[0,0],[0,0]]
 #interactions of a-pairs-same
 #deal with a-pairs
 
+print("This simulates a-pairs, L1-L1.")
+
 a_his = []
 
 perturbation_pos_a = random.sample(range(6, len(a_pair)), round(len(a_pair)*0.05))
@@ -313,6 +317,8 @@ else:
 #interactions of b-pairs
 #deal with b-pairs
 
+print("This simulates c-pairs, L1-L2.")
+
 b_his = []
 
 perturbation_pos_b = random.sample(range(6, len(b_pair)), round(len(b_pair) * 0.05))
@@ -387,6 +393,8 @@ else:
 
 #interactions of c-pairs
 
+print("This simulates c-pairs, L1-L3.")
+
 c_his = []
 
 perturbation_pos_c = random.sample(range(6, len(c_pair)), round(len(c_pair) * 0.05))
@@ -457,6 +465,8 @@ else:
 #interactions of d-pairs
 #no overleap
 
+print("This simulates d-pairs, L1-L4.")
+
 d_his = []
 
 perturbation_pos_d = random.sample(range(6, len(d_pair)), round(len(d_pair) * 0.05))
@@ -521,6 +531,7 @@ else:
     print(d_his)
 
 #interactions of e-pairs-same
+print("This simulates e-pairs, L2-L2.")
 
 e_his = []
 
@@ -602,11 +613,175 @@ if len(e_his)!= len(e_pair):
     print('ERROR')
 else:
     print(e_his)
+
+
 #interactions of f-pairs
+
+print("This simulates f-pairs, L2-L3.")
+
+f_his = []
+
+perturbation_pos_f = random.sample(range(6, len(f_pair)), round(len(f_pair) * 0.05))
+perturbation_pos_f = sorted(perturbation_pos_f)
+print(perturbation_pos_f)
+
+def calculate_strategy_f(memoryA, memoryB):
+    t1 = [0,0,0]
+    t2 = [0,0,0]
+    for i in range(len(memoryA)):
+        t1[i] = memoryB[i][0]
+        t2[i] = memoryA[i][1]
+    dis1 = [t2.count(2)/3, t2.count(3)/3, t2.count(4)/3]
+    #print(dis1)
+    dis2 = [t1.count(1)/3, t1.count(2)/3, t1.count(3)/3]
+    #print(dis2)
+    payoff1_A = 0.4 * dis1[0] + 0.4 * dis1[1] + 0.4 * dis1[2]
+    payoff2_A = 1.8 * dis1[0] + 0.8 * dis1[1] + 0.8 * dis1[2]
+    payoff3_A = 0 * dis1[0] + 1 * dis1[1] + 0 * dis1[2]
+    if payoff1_A > payoff2_A and payoff1_A > payoff3_A:
+        n = 1
+    if payoff2_A >= payoff1_A and payoff2_A >= payoff3_A: #>= implements the tie-breaker
+        n = 2
+    if payoff3_A > payoff1_A and payoff3_A > payoff2_A:
+        n = 3
+
+    payoff2_B = 0 * dis2[0] + 1 * dis2[1] + 0 * dis2[2]
+    payoff3_B = 0.8 * dis2[0] + 0.8 * dis2[1] + 1.8 * dis2[2]
+    payoff4_B = 0.4 * dis2[0] + 0.4 * dis2[1] + 0.4 * dis2[2]
+    if payoff2_B > payoff3_B and payoff2_B > payoff4_B:
+        m = 2
+    if payoff3_B >= payoff2_B and payoff3_B >= payoff4_B:
+        m = 3
+    if payoff4_B > payoff2_B and payoff4_B > payoff3_B:
+        m = 4
+
+    return [n,m]
+
+# testing a little bit
+#memoryA = [[1, 2], [1, 2], [1, 3]]
+#memoryB = [[1, 4], [1, 4], [1, 4]]
+
+#print(calculate_strategy_f(memoryA, memoryB))
+
+def random_pick_f():
+    n = random.randint(1,3)
+    m = random.randint(2,4)
+    return [n,m]
+
+f_his = []
+
+temp = [[0 for col in range(2)] for row in range(5)]
+
+for i in range(5):
+    temp[i][0] = random.randint(1, 3)
+    temp[i][1] = random.randint(2, 4)
+
+for item in temp:
+    f_his.append(item)
+
+#print(b_his)
+
+memoryA = []
+memoryB = []
+
+#form history iteratively
+for i in range(5, len(f_pair)):
+    memoryA = random.sample(f_his,3)
+    memoryB = random.sample(f_his,3)
+    if i not in perturbation_pos_f:
+        k = calculate_strategy_f(memoryA, memoryB)
+        f_his.append(k)
+    else:
+        k = random_pick_f()
+        f_his.append(k)
+
+if len(f_his)!= len(f_pair):
+    print('ERROR')
+else:
+    print(f_his)
+
 
 #interactions of g-pairs
 
+print("This simulates g-pairs, L2-L4.")
+
+g_his = []
+
+perturbation_pos_g = random.sample(range(6, len(g_pair)), round(len(g_pair) * 0.05))
+perturbation_pos_g = sorted(perturbation_pos_g)
+print(perturbation_pos_g)
+
+def calculate_strategy_g(memoryA, memoryB):
+    t1 = [0,0,0]
+    t2 = [0,0,0]
+    for i in range(len(memoryA)):
+        t1[i] = memoryB[i][0]
+        t2[i] = memoryA[i][1]
+    dis1 = [t2.count(3)/3, t2.count(4)/3]
+    #print(dis1)
+    dis2 = [t1.count(1)/3, t1.count(2)/3, t1.count(3)/3]
+    #print(dis2)
+    payoff1_A = 0.4 * dis1[0] + 0.4 * dis1[1]
+    payoff2_A = 0.8 * dis1[0] + 0.8 * dis1[1]
+    payoff3_A = 1 * dis1[0] + 0 * dis1[1]
+    if payoff1_A > payoff2_A and payoff1_A > payoff3_A:
+        n = 1
+    if payoff2_A >= payoff1_A and payoff2_A >= payoff3_A: #>= implements the tie-breaker
+        n = 2
+    if payoff3_A > payoff1_A and payoff3_A > payoff2_A:
+        n = 3
+
+
+    payoff3_B = 0.4 * dis2[0] + 0.4 * dis2[1] + 1.4 * dis2[2]
+    payoff4_B = 0.8 * dis2[0] + 0.8 * dis2[1] + 0.8 * dis2[2]
+    if payoff3_B > payoff4_B:
+        m = 3
+    if payoff4_B >= payoff3_B:
+        m = 4
+
+    return [n,m]
+
+def random_pick_g():
+    n = random.randint(1,3)
+    m = random.randint(3,4)
+    return [n,m]
+
+g_his = []
+
+temp = [[0 for col in range(2)] for row in range(5)]
+
+for i in range(5):
+    temp[i][0] = random.randint(1, 3)
+    temp[i][1] = random.randint(3, 4)
+
+for item in temp:
+    g_his.append(item)
+
+#print(g_his)
+
+memoryA = []
+memoryB = []
+
+#form history iteratively
+for i in range(5, len(g_pair)):
+    memoryA = random.sample(g_his,3)
+    memoryB = random.sample(g_his,3)
+    if i not in perturbation_pos_g:
+        k = calculate_strategy_g(memoryA, memoryB)
+        g_his.append(k)
+    else:
+        k = random_pick_g()
+        g_his.append(k)
+
+if len(g_his)!= len(g_pair):
+    print('ERROR')
+else:
+    print(g_his)
+
 #interactions of h-pairs-same
+
+print("This simulates h-pairs, L3-L3.")
+
 h_his = []
 
 perturbation_pos_h = random.sample(range(6, len(h_pair)), round(len(h_pair) * 0.05))
@@ -693,7 +868,91 @@ else:
 
 #interactions of i-pairs
 
+print("This simulates i-pairs, L3-L4.")
+
+i_his = []
+
+perturbation_pos_i = random.sample(range(6, len(i_pair)), round(len(i_pair) * 0.05))
+perturbation_pos_i = sorted(perturbation_pos_i)
+print(perturbation_pos_i)
+
+
+def calculate_strategy_i(memoryA, memoryB):
+    t1 = [0, 0, 0]
+    t2 = [0, 0, 0]
+    for i in range(len(memoryA)):
+        t1[i] = memoryB[i][0]
+        t2[i] = memoryA[i][1]
+    dis1 = [t2.count(3) / 3, t2.count(4) / 3]
+    # print(dis1)
+    dis2 = [t1.count(2) / 3, t1.count(3) / 3, t1.count(4) / 3]
+    # print(dis2)
+    payoff2_A = 0 * dis1[0] + 0 * dis1[1]
+    payoff3_A = 1.8 * dis1[0] + 0.8 * dis1[1]
+    payoff4_A = 0.4 * dis1[0] + 1.4 * dis1[1]
+    if payoff2_A > payoff3_A and payoff2_A > payoff4_A:
+        n = 2
+    if payoff3_A >= payoff2_A and payoff3_A >= payoff4_A:  # >= implements the tie-breaker
+        n = 3
+    if payoff4_A > payoff2_A and payoff4_A > payoff3_A:
+        n = 4
+
+    payoff3_B = 0.4 * dis2[0] + 1.4 * dis2[1] + 0.4 * dis2[2]
+    payoff4_B = 0.8 * dis2[0] + 0.8 * dis2[1] + 1.8 * dis2[2]
+    if payoff3_B > payoff4_B:
+        m = 3
+    if payoff4_B >= payoff3_B:
+        m = 4
+
+    return [n, m]
+
+
+# testing a little bit
+#memoryA = [[2, 4], [3, 4], [4, 4]]
+#memoryB = [[3, 3], [4, 3], [4, 3]]
+
+#print(calculate_strategy_i(memoryA, memoryB))
+def random_pick_i():
+    n = random.randint(2, 4)
+    m = random.randint(3, 4)
+    return [n, m]
+
+
+i_his = []
+
+temp = [[0 for col in range(2)] for row in range(5)]
+
+for i in range(5):
+    temp[i][0] = random.randint(2, 4)
+    temp[i][1] = random.randint(3, 4)
+
+for item in temp:
+    i_his.append(item)
+
+    # print(b_his)
+
+memoryA = []
+memoryB = []
+
+    # form history iteratively
+for i in range(5, len(i_pair)):
+    memoryA = random.sample(i_his, 3)
+    memoryB = random.sample(i_his, 3)
+    if i not in perturbation_pos_i:
+        k = calculate_strategy_i(memoryA, memoryB)
+        i_his.append(k)
+    else:
+        k = random_pick_i()
+        i_his.append(k)
+
+if len(i_his) != len(i_pair):
+    print('ERROR')
+else:
+    print(i_his)
+
 #interactions of j-pairs-same
+print("This simulates j-pairs, L4-L4.")
+
 j_his = []
 
 perturbation_pos_j = random.sample(range(6, len(j_pair)), round(len(j_pair)*0.05))
@@ -761,8 +1020,11 @@ if len(j_his)!= len(j_pair):
 else:
     print(j_his)
 
+print('***Human-Human Done***')
+
 #that concludes hum-hum
 
 #Rob-hum
 #Rob could deal with all history, rob could use all strategy
+print('***Robot-Human Started***')
 
